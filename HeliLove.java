@@ -247,7 +247,7 @@ public class HeliLove extends JPanel implements KeyListener {
                 g.setColor(new Color(100, 150, 255));
                 g.fillRect(hero.x, hero.y, 200, 130);
             }
-            if(hero.y > 0)
+            if(hero.y > 12)
                 hero.y -= 12;
         }
         else if(e.getKeyCode() == KeyEvent.VK_DOWN) {
@@ -255,7 +255,7 @@ public class HeliLove extends JPanel implements KeyListener {
                 g.setColor(new Color(100, 150, 255));
                 g.fillRect(hero.x, hero.y, 200, 130);
             }
-            if(hero.y < 501)
+            if(hero.y < 471)
                 hero.y += 12;
         }
         else if(e.getKeyCode() == KeyEvent.VK_LEFT) {
@@ -263,7 +263,7 @@ public class HeliLove extends JPanel implements KeyListener {
                 g.setColor(new Color(100, 150, 255));
                 g.fillRect(hero.x, hero.y, 200, 130);
             }
-            if(hero.x > 0)
+            if(hero.x > 20)
                 hero.x -= 12;
         }
         else if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
@@ -271,7 +271,7 @@ public class HeliLove extends JPanel implements KeyListener {
                 g.setColor(new Color(100, 150, 255));
                 g.fillRect(hero.x, hero.y, 200, 130);
             }
-            if(hero.x < 1200)
+            if(hero.x < 1180)
                 hero.x += 12;
         }
         else if(e.getKeyCode() == KeyEvent.VK_PERIOD) {
@@ -297,8 +297,6 @@ public class HeliLove extends JPanel implements KeyListener {
         
         j.setTitle("crash: " + hero.crash + ", kills: " + hero.kills);
         
-        //Image img = ImageIO.read(getClass().getResourceAsStream("hero.png"));
-
         javax.swing.ImageIcon iFb = new javax.swing.ImageIcon(this.getClass().getResource("heli.gif"));
         Image img = iFb.getImage();
 
@@ -372,9 +370,7 @@ public class HeliLove extends JPanel implements KeyListener {
     void drawScreen() {
         try {
             drawClouds();
-            //drawGrass();
             drawJets();
-            //drawTrees();
         } catch(Exception e) {
             e.printStackTrace();
         }
@@ -448,7 +444,7 @@ public class HeliLove extends JPanel implements KeyListener {
             public void run() {
                 while(true) {
                     if(jets.size() == 0) {
-                        for(int i=0; i<10; i++) {
+                        for(int i=0; i<6; i++) {
                             Jet cloud = new Jet();
                             cloud.x = 1200 + rand.nextInt(1000);
                             cloud.y = rand.nextInt(499);
