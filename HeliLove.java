@@ -2,6 +2,8 @@ package jetlove;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.AffineTransform;
+import java.awt.image.*;
 import java.util.*;
 import javax.imageio.*;
 import javax.swing.*;
@@ -58,7 +60,7 @@ public class HeliLove extends JPanel implements KeyListener {
                     while(true) {
                         for(int i=0; i<shots.size(); i++) {
                             synchronized(this) {
-                                g.setColor(new Color(100, 150, 255));
+                                g.setColor(new Color(150, 150, 255));
                                 g.fillRect(shots.get(i).x, shots.get(i).y, 60, 20);
                             }
                             shots.get(i).x += 50;
@@ -80,7 +82,7 @@ public class HeliLove extends JPanel implements KeyListener {
                                     j.setTitle("crash: " + hero.crash + ", kills: " + hero.kills);
 
                                     synchronized(this) {
-                                        g.setColor(new Color(100, 150, 255));
+                                        g.setColor(new Color(150, 150, 255));
                                         g.fillRect(jets.get(k).x, jets.get(k).y, 100, 100);
                                     }
 
@@ -138,12 +140,8 @@ public class HeliLove extends JPanel implements KeyListener {
                 while(true) {
                     HeliLove.this.repaint();
                     j.setTitle("crash: " + hero.crash + ", kills: " + hero.kills + ", bullets: " + bulletsCount);
-        try {
-            Image img = ImageIO.read(getClass().getResourceAsStream("grass.png"));
-
-            g.drawImage(img, 0, 600, 1200, 200, null);
-        } catch(Exception e) {}
-        drawTrees();
+                    drawField();
+                    drawTrees();
                     try {
                         Thread.sleep(1200);
                     } catch(Exception e) {}
@@ -166,7 +164,7 @@ public class HeliLove extends JPanel implements KeyListener {
                     for(int i=0; i<bullets.size(); i++) {
                         
                         try {
-                            g.setColor(new Color(100, 150, 255));
+                            g.setColor(new Color(150, 150, 255));
                             g.fillRect(bullets.get(i).x, bullets.get(i).y, 50, 50);
                             
                             bullets.get(i).x -= 10;
@@ -225,7 +223,7 @@ public class HeliLove extends JPanel implements KeyListener {
                         Thread.sleep(150);
                     } catch(Exception e) {}
                     for(int i=0; i<ar.size(); i++) {
-                        g.setColor(new Color(100, 150, 255));
+                        g.setColor(new Color(150, 150, 255));
                         g.fillRect(((Explode)ar.get(i)).x-50, ((Explode)ar.get(i)).y-120, 200, 200);
                     }
                     ar.clear();
@@ -244,7 +242,7 @@ public class HeliLove extends JPanel implements KeyListener {
     public void keyPressed(KeyEvent e) {
         if(e.getKeyCode() == KeyEvent.VK_UP) {
             synchronized(this) {
-                g.setColor(new Color(100, 150, 255));
+                g.setColor(new Color(150, 150, 255));
                 g.fillRect(hero.x, hero.y, 200, 130);
             }
             if(hero.y > 12)
@@ -252,7 +250,7 @@ public class HeliLove extends JPanel implements KeyListener {
         }
         else if(e.getKeyCode() == KeyEvent.VK_DOWN) {
             synchronized(this) {
-                g.setColor(new Color(100, 150, 255));
+                g.setColor(new Color(150, 150, 255));
                 g.fillRect(hero.x, hero.y, 200, 130);
             }
             if(hero.y < 471)
@@ -260,7 +258,7 @@ public class HeliLove extends JPanel implements KeyListener {
         }
         else if(e.getKeyCode() == KeyEvent.VK_LEFT) {
             synchronized(this) {
-                g.setColor(new Color(100, 150, 255));
+                g.setColor(new Color(150, 150, 255));
                 g.fillRect(hero.x, hero.y, 200, 130);
             }
             if(hero.x > 20)
@@ -268,7 +266,7 @@ public class HeliLove extends JPanel implements KeyListener {
         }
         else if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
             synchronized(this) {
-                g.setColor(new Color(100, 150, 255));
+                g.setColor(new Color(150, 150, 255));
                 g.fillRect(hero.x, hero.y, 200, 130);
             }
             if(hero.x < 1180)
@@ -306,7 +304,7 @@ public class HeliLove extends JPanel implements KeyListener {
                 while(true) {
                     g.drawImage(img, hero.x, hero.y, 200, 130, null);
                     try {
-                        Thread.sleep(20);
+                        Thread.sleep(0);
                     } catch(Exception e) {}
                 }
             }
@@ -321,16 +319,24 @@ public class HeliLove extends JPanel implements KeyListener {
 
         setDoubleBuffered(true);
 
-        g.setColor(new Color(100, 150, 255));
-        g.fillRect(0, 0, 1200, 600);
+        g.setColor(new Color(150, 150, 255));
+        g.fillRect(0, 0, 1200, 800);
 
-//        g.setColor(new Color(50, 150, 0));
-//        g.fillRect(0, 600, 1200, 200);
-//        try {
-//            Image img = ImageIO.read(getClass().getResourceAsStream("grass.png"));
-//
-//            g.drawImage(img, 0, 600, 1200, 200, null);
-//        } catch(Exception e) {}
+        g.drawImage(fieldImg2, thex + 1200, 600, 1200, 200, null);
+        g.drawImage(fieldImg1, thex, 600, 1200, 200, null);
+
+        for(int i=0; i<trees.size(); i++) {
+            synchronized(this) {
+                g.setColor(new Color(0, 200, 0));
+                g.fillRect(trees.get(i).x, trees.get(i).y, 20, 20);
+                g.setColor(new Color(200,100,50));
+                g.fillRect(trees.get(i).x, trees.get(i).y+20, 20, 30);
+            }
+
+            if(trees.get(i).x < 0) {
+                trees.remove(trees.get(i));
+            }
+        }
     }
 
     void setGUI() {
@@ -390,52 +396,80 @@ public class HeliLove extends JPanel implements KeyListener {
 
     void drawTrees() {
 
-                    if(trees.size() == 0) {
-                        for(int i=0; i<10; i++) {
-                            Tree cloud = new Tree();
-                            cloud.x = 1200 + rand.nextInt(1000);
-                            cloud.y = 600;
-                            trees.add(cloud);
-                        }
-                        for(int i=0; i<10; i++) {
-                            Tree cloud = new Tree();
-                            cloud.x = 1200 + rand.nextInt(1000);
-                            cloud.y = 700;
-                            trees.add(cloud);
-                        }
-                    }
-                    for(int i=0; i<trees.size(); i++) {
-                        synchronized(this) {
-//                            g.setColor(new Color(50, 150, 0));
-//                            g.fillRect(trees.get(i).x, trees.get(i).y, 20, 50);
-//        try {
-//            Image img = ImageIO.read(getClass().getResourceAsStream("grass.png"));
-//
-//            g.drawImage(img, 0, 600, 1200, 200, null);
-//        } catch(Exception e) {}
-                        }
+        if(trees.size() == 0) {
+            for(int i=0; i<10; i++) {
+                Tree cloud = new Tree();
+                cloud.x = 1200 + rand.nextInt(1000);
+                cloud.y = 600;
+                trees.add(cloud);
+            }
+            for(int i=0; i<10; i++) {
+                Tree cloud = new Tree();
+                cloud.x = 1200 + rand.nextInt(1000);
+                cloud.y = 700;
+                trees.add(cloud);
+            }
+        }
+        for(int i=0; i<trees.size(); i++) {
 
-                        trees.get(i).x -= 100;
-                    }
+            trees.get(i).x -= 100;
+        }
 
-                    for(int i=0; i<trees.size(); i++) {
-                        synchronized(this) {
-                            g.setColor(new Color(0, 200, 0));
-                            g.fillRect(trees.get(i).x, trees.get(i).y, 20, 20);
-                            g.setColor(new Color(200,100,50));
-                            g.fillRect(trees.get(i).x, trees.get(i).y+20, 20, 30);
-                        }
-                        
-                        if(trees.get(i).x < 0) {
-                            trees.remove(trees.get(i));
-                        }
-                    }
-                    
-                    try {
-                        Thread.sleep(0);
-                    } catch(Exception e) {}
+        for(int i=0; i<trees.size(); i++) {
+            synchronized(this) {
+                g.setColor(new Color(0, 200, 0));
+                g.fillRect(trees.get(i).x, trees.get(i).y, 20, 20);
+                g.setColor(new Color(200,100,50));
+                g.fillRect(trees.get(i).x, trees.get(i).y+20, 20, 30);
+            }
+
+            if(trees.get(i).x < 0) {
+                trees.remove(trees.get(i));
+            }
+        }
+
+        try {
+            Thread.sleep(0);
+        } catch(Exception e) {}
     }
+
+    BufferedImage fieldImg1 = null;
+    BufferedImage fieldImg2 = null;
+    BufferedImage fieldImg3 = null;
+    int thex = 0;
     
+    private void drawField() {
+        if(fieldImg1 == null) {
+            try {
+                fieldImg1 = ImageIO.read(getClass().getResourceAsStream("grass.png"));
+            } catch(Exception e) {
+                
+            }
+        }
+        if(fieldImg2 == null) {
+            try {
+                fieldImg2 = ImageIO.read(getClass().getResourceAsStream("grass.png"));
+
+                // Flip the image horizontally
+                AffineTransform tx = AffineTransform.getScaleInstance(-1, 1);
+                tx.translate(-fieldImg2.getWidth(null), 0);
+                AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+                fieldImg2 = op.filter(fieldImg2, null);
+            } catch(Exception e) {
+                
+            }
+        }
+        
+        thex-=100;
+
+        g.drawImage(fieldImg2, thex + 1200, 600, 1200, 200, null);
+        g.drawImage(fieldImg1, thex, 600, 1200, 200, null);
+
+        if(thex <= -1200) {
+            thex = 0;
+        }
+    }
+
     void drawJets() throws Exception {
         Image img = ImageIO.read(getClass().getResourceAsStream("bomber.png"));
 
@@ -453,7 +487,7 @@ public class HeliLove extends JPanel implements KeyListener {
                     }
                     for(int i=0; i<jets.size(); i++) {
                         synchronized(this) {
-                            g.setColor(new Color(100, 150, 255));
+                            g.setColor(new Color(150, 150, 255));
                             g.fillRect(jets.get(i).x, jets.get(i).y, 100, 100);
                         }
 
@@ -471,7 +505,7 @@ public class HeliLove extends JPanel implements KeyListener {
                                             jets.get(i).y + l < hero.y + 100 && jets.get(i).y + l > hero.y)
                                     {
                                         synchronized(this) {
-                                            g.setColor(new Color(100, 150, 255));
+                                            g.setColor(new Color(150, 150, 255));
                                             g.fillRect(jets.get(i).x, jets.get(i).y, 100, 100);
                                         }
 
@@ -519,7 +553,7 @@ public class HeliLove extends JPanel implements KeyListener {
                     }
                     for(int i=0; i<clouds.size(); i++) {
                         synchronized(this) {
-                            g.setColor(new Color(100, 150, 255));
+                            g.setColor(new Color(150, 150, 255));
                             g.fillRect(clouds.get(i).x, clouds.get(i).y, 100, 100);
                         }
 
